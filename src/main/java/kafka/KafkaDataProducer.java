@@ -21,8 +21,8 @@ public class KafkaDataProducer {
         properties.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
 
         KafkaProducer<String, String> producer = new KafkaProducer<>(properties);
-        for (int i = 0; i < 10; i++) {
-            ProducerRecord<String, String> record = new ProducerRecord(TOPIC, "Harsh-NewMessage-" + i);
+        for (int i = 0; i < 100; i++) {
+            ProducerRecord<String, String> record = new ProducerRecord(TOPIC, "Harsh-Patil-" + i);
             producer.send(record);
             Thread.sleep(500);
         }

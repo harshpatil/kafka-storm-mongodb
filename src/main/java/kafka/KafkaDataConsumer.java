@@ -1,13 +1,7 @@
 package kafka;
 
-import org.apache.kafka.clients.consumer.Consumer;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.common.serialization.LongDeserializer;
-import org.apache.kafka.common.serialization.StringDeserializer;
-
-import java.util.Collections;
+import org.apache.kafka.clients.consumer.*;
+import java.util.Arrays;
 import java.util.Properties;
 
 import static config.ConstantConfig.BOOTSTRAP_SERVERS;
@@ -18,53 +12,25 @@ import static config.ConstantConfig.TOPIC;
  */
 public class KafkaDataConsumer {
 
-    public static void main(String[] args) throws Exception {
-        runConsumer();
-    }
+    public static void main(String[] args) {
 
-    private static Consumer<Long, String> createConsumer() {
+        Properties props = new Properties();
+        props.put("bootstrap.servers", BOOTSTRAP_SERVERS);
+        props.put("group.id", "mygroup");
+        props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
 
-        final Properties props = new Properties();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, BOOTSTRAP_SERVERS);
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, "KafkaExampleConsumer");
-        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, LongDeserializer.class.getName());
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
+        consumer.subscribe(Arrays.asList(TOPIC));
 
-        // Create the consumer using props.
-        final Consumer<Long, String> consumer = new KafkaConsumer<>(props);
-
-        // Subscribe to the topic.
-        consumer.subscribe(Collections.singletonList(TOPIC));
-        return consumer;
-    }
-
-    private static void runConsumer() throws InterruptedException {
-
-        final Consumer<Long, String> consumer = createConsumer();
-        final int giveUp = 100;   int noRecordsCount = 0;
-
-        while (true) {
-            final ConsumerRecords<Long, String> consumerRecords = consumer.poll(1000);
-
-            if (consumerRecords.count()==0) {
-                noRecordsCount++;
-                if (noRecordsCount > giveUp) {
-                    break;
-                } else{
-                    continue;
-                }
+        boolean running = true;
+        while (running) {
+            ConsumerRecords<String, String> records = consumer.poll(100);
+            for (ConsumerRecord<String, String> record : records) {
+                System.out.println(record.value());
             }
-            consumerRecords.forEach(record -> {
-//                System.out.printf("Consumer Record:(%d, %s, %d, %d)\n",
-//                        record.key(), record.value(),
-//                        record.partition(), record.offset());
-//                System.out.println("Consumer Record: " + record.key() + ", " + record.value());
-                System.out.println("Consumer Record: " + record.toString());
-
-            });
-            consumer.commitAsync();
         }
+
         consumer.close();
-        System.out.println("DONE");
     }
 }
