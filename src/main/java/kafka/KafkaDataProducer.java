@@ -13,7 +13,7 @@ import static config.ConstantConfig.TOPIC;
  */
 public class KafkaDataProducer {
 
-    public static void main(String[] args) throws InterruptedException {
+    /*public static void main(String[] args) throws InterruptedException {
 
         Properties properties = new Properties();
         properties.put("bootstrap.servers", BOOTSTRAP_SERVERS);
@@ -27,5 +27,5 @@ public class KafkaDataProducer {
             Thread.sleep(500);
         }
         producer.close();
-    }
+    }*/
 }

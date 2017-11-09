@@ -12,7 +12,7 @@ import static config.ConstantConfig.TOPIC;
  */
 public class KafkaDataConsumer {
 
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
 
         Properties props = new Properties();
         props.put("bootstrap.servers", BOOTSTRAP_SERVERS);
@@ -32,5 +32,5 @@ public class KafkaDataConsumer {
         }
 
         consumer.close();
-    }
+    }*/
 }
