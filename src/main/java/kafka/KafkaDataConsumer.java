@@ -10,7 +10,7 @@
 //
 //import static config.ConstantConfig.BOOTSTRAP_SERVERS;
 //import static config.ConstantConfig.PRODUCT_VIEW_EVENT;
-//import static config.ConstantConfig.TOPIC;
+//import static config.ConstantConfig.KAFKA_TOPIC;
 //
 //public class KafkaDataConsumer {
 //
@@ -30,7 +30,7 @@
 //        props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
 //
 //        KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
-//        consumer.subscribe(Arrays.asList(TOPIC));
+//        consumer.subscribe(Arrays.asList(KAFKA_TOPIC));
 //
 //        boolean running = true;
 //        while (running) {

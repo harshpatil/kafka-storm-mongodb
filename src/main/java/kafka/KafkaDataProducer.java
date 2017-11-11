@@ -12,7 +12,7 @@
 //
 //import static config.ConstantConfig.BOOTSTRAP_SERVERS;
 //import static config.ConstantConfig.PRODUCT_VIEW_EVENT;
-//import static config.ConstantConfig.TOPIC;
+//import static config.ConstantConfig.KAFKA_TOPIC;
 //
 //public class KafkaDataProducer {
 //
@@ -25,7 +25,7 @@
 //
 ////        KafkaProducer<String, String> producer = new KafkaProducer<>(properties);
 ////        for (int i = 0; i < 100; i++) {
-////            ProducerRecord<String, String> record = new ProducerRecord(TOPIC, "Harsh-Patil-" + i);
+////            ProducerRecord<String, String> record = new ProducerRecord(KAFKA_TOPIC, "Harsh-Patil-" + i);
 ////            producer.send(record);
 ////            Thread.sleep(500);
 ////        }
@@ -45,7 +45,7 @@
 //            avroRecord.put("productCategory", "tshirt");
 //
 //            byte[] bytes = recordInjection.apply(avroRecord);
-//            ProducerRecord<String, byte[]> record = new ProducerRecord<>(TOPIC, bytes);
+//            ProducerRecord<String, byte[]> record = new ProducerRecord<>(KAFKA_TOPIC, bytes);
 //            producer.send(record);
 //            Thread.sleep(500);
 //        }

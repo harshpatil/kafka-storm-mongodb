@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import static config.ConstantConfig.*;
+
 public class FindRegionUsingIPAddressBolt implements IRichBolt {
 
     private OutputCollector outputCollector;
@@ -31,16 +33,14 @@ public class FindRegionUsingIPAddressBolt implements IRichBolt {
     public void prepare(Map map, TopologyContext topologyContext, OutputCollector outputCollector) {
 
         this.outputCollector = outputCollector;
-        this.mongoClient = new MongoClient("localhost", 27017);
-        this.mongoDB = mongoClient.getDatabase("UserInsights");
-        this.collection = "productViewEvent";
-
+        this.mongoClient = new MongoClient(MONGO_HOST, MONGO_PORT_NUMBER);
+        this.mongoDB = mongoClient.getDatabase(MONGO_DB_NAME);
+        this.collection = MONGO_COLLECTION_NAME;
     }
 
     public void execute(Tuple tuple) {
 
         Fields fields = tuple.getFields();
-
         eventJson = (JSONObject) JSONSerializer.toJSON((String) tuple.getValueByField(fields.get(0)));
         String ipAddress = (String) eventJson.get("ipAddress");
         String userId = (String) eventJson.get("userId");
@@ -56,7 +56,7 @@ public class FindRegionUsingIPAddressBolt implements IRichBolt {
             document.append("ipAddress", ipAddress);
             document.append("userId", userId);
             document.append("productId", productId);
-            document.append("productCategoty", productCategory);
+            document.append("productCategory", productCategory);
             document.append("state", ipApiResponse.getRegionName());
             document.append("stateCode", ipApiResponse.getRegion());
             document.append("country", ipApiResponse.getCountry());

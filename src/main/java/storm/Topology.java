@@ -8,7 +8,7 @@ import backtype.storm.topology.TopologyBuilder;
 import storm.bolt.FindRegionUsingIPAddressBolt;
 import storm.kafka.*;
 
-import static config.ConstantConfig.TOPIC;
+import static config.ConstantConfig.*;
 
 public class Topology {
 
@@ -17,19 +17,18 @@ public class Topology {
         Config config = new Config();
         config.setDebug(true);
 
-        BrokerHosts hosts = new ZkHosts("localhost:2181");
-        String topic = TOPIC;
-        String zkRoot = "/kafka";
-        String groupId = "mygroup";
+        BrokerHosts hosts = new ZkHosts(ZOOKEEPER_HOST);
+        String topic = KAFKA_TOPIC;
+        String zkRoot = ZOOKEEPER_ROOT;
+        String groupId = KAFKA_GROUP_ID;
         SpoutConfig spoutConfig = new SpoutConfig(hosts, topic, zkRoot, groupId);
         spoutConfig.scheme = new SchemeAsMultiScheme(new StringScheme());
         KafkaSpout kafkaSpout = new KafkaSpout(spoutConfig);
 
         TopologyBuilder topologyBuilder = new TopologyBuilder();
-//        topologyBuilder.setSpout("producViewEventReader", new ProductViewEventReaderSpout());
-        topologyBuilder.setSpout("producViewEventReader", kafkaSpout);
-        topologyBuilder.setBolt("productEventWriteRegion", new FindRegionUsingIPAddressBolt())
-                .shuffleGrouping("producViewEventReader");
+        topologyBuilder.setSpout(STORM_SPOUT_NAME, kafkaSpout);
+        topologyBuilder.setBolt(STORM_BOLT_NAME, new FindRegionUsingIPAddressBolt())
+                .shuffleGrouping(STORM_SPOUT_NAME);
 
 
         if (args != null && args.length > 0) {
@@ -38,9 +37,9 @@ public class Topology {
         }
         else {
             LocalCluster cluster = new LocalCluster();
-            cluster.submitTopology("testProductViewEvent-topology", config, topologyBuilder.createTopology());
+            cluster.submitTopology("test-topology", config, topologyBuilder.createTopology());
 //            Thread.sleep(10000);
-//            cluster.killTopology("testProductViewEvent-topology");
+//            cluster.killTopology("test-topology");
 //            cluster.shutdown();
         }
     }
