@@ -2,9 +2,6 @@ package storm.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-/**
- * Created by HarshPatil on 11/10/17.
- */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class IPApiResponse {
 

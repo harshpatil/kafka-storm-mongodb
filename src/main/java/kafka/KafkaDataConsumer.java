@@ -1,18 +1,27 @@
 //package kafka;
 //
+//import com.twitter.bijection.Injection;
+//import com.twitter.bijection.avro.GenericAvroCodecs;
+//import org.apache.avro.Schema;
+//import org.apache.avro.generic.GenericRecord;
 //import org.apache.kafka.clients.consumer.*;
 //import java.util.Arrays;
 //import java.util.Properties;
 //
 //import static config.ConstantConfig.BOOTSTRAP_SERVERS;
+//import static config.ConstantConfig.PRODUCT_VIEW_EVENT;
 //import static config.ConstantConfig.TOPIC;
 //
-///**
-// * Created by HarshPatil on 11/7/17.
-// */
 //public class KafkaDataConsumer {
 //
-//    /*public static void main(String[] args) {
+//    private static Injection<GenericRecord, byte[]> recordInjection;
+//
+//    static {
+//        Schema.Parser parser = new Schema.Parser();
+//        Schema schema = parser.parse(PRODUCT_VIEW_EVENT);
+//        recordInjection = GenericAvroCodecs.toBinary(schema);
+//    }
+//    public static void main(String[] args) {
 //
 //        Properties props = new Properties();
 //        props.put("bootstrap.servers", BOOTSTRAP_SERVERS);
@@ -32,5 +41,6 @@
 //        }
 //
 //        consumer.close();
-//    }*/
+//    }
+//
 //}

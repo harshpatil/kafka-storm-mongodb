@@ -4,10 +4,13 @@ import backtype.storm.task.OutputCollector;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.IRichBolt;
 import backtype.storm.topology.OutputFieldsDeclarer;
+import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
+import net.sf.json.JSONObject;
+import net.sf.json.JSONSerializer;
 import okhttp3.*;
 import org.bson.Document;
 import storm.model.IPApiResponse;
@@ -16,9 +19,6 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Created by HarshPatil on 11/10/17.
- */
 public class FindRegionUsingIPAddressBolt implements IRichBolt {
 
     private OutputCollector outputCollector;
@@ -26,6 +26,7 @@ public class FindRegionUsingIPAddressBolt implements IRichBolt {
     private MongoDatabase mongoDB;
     private String collection;
     private OkHttpClient httpClient;
+    JSONObject eventJson = null;
 
     public void prepare(Map map, TopologyContext topologyContext, OutputCollector outputCollector) {
 
@@ -33,19 +34,23 @@ public class FindRegionUsingIPAddressBolt implements IRichBolt {
         this.mongoClient = new MongoClient("localhost", 27017);
         this.mongoDB = mongoClient.getDatabase("UserInsights");
         this.collection = "productViewEvent";
+
     }
 
     public void execute(Tuple tuple) {
 
-        String ipAddress = tuple.getString(0);
+        Fields fields = tuple.getFields();
+
+        eventJson = (JSONObject) JSONSerializer.toJSON((String) tuple.getValueByField(fields.get(0)));
+        String ipAddress = (String) eventJson.get("ipAddress");
+        String userId = (String) eventJson.get("userId");
+        String productId = (String) eventJson.get("productId");
+        String productCategory = (String) eventJson.get("productCategory");
         String url = "http://ip-api.com/json/" + ipAddress;
 
         try {
             Response response = executeGETRequest(url, "GET");
             IPApiResponse ipApiResponse = new ObjectMapper().readValue(new String(response.body().bytes()), IPApiResponse.class);
-            String userId = tuple.getString(1);
-            String productId = tuple.getString(2);
-            String productCategory = tuple.getString(3);
 
             Document document = new Document();
             document.append("ipAddress", ipAddress);
@@ -96,8 +101,8 @@ public class FindRegionUsingIPAddressBolt implements IRichBolt {
         if (httpClient == null) {
             OkHttpClient.Builder builder = new OkHttpClient.Builder();
             httpClient = builder.retryOnConnectionFailure(true)
-                    .connectTimeout(10, TimeUnit.SECONDS)
-                    .readTimeout(30, TimeUnit.SECONDS)
+                    .connectTimeout(60, TimeUnit.SECONDS)
+                    .readTimeout(60, TimeUnit.SECONDS)
                     .writeTimeout(60, TimeUnit.SECONDS)
                     .build();
         }
