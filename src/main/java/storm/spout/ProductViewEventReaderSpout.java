@@ -15,7 +15,6 @@ import java.util.Map;
 public class ProductViewEventReaderSpout implements IRichSpout {
 
     private SpoutOutputCollector collector;
-    private boolean completed = false;
 
     private TopologyContext topologyContext;
     private Integer index = 0;
